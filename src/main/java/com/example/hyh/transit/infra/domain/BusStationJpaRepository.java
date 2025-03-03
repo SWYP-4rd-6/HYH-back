@@ -14,7 +14,7 @@ public interface BusStationJpaRepository extends JpaRepository<BusStation, Long>
     List<BusStation> searchByStationName(@Param("keyword") String keyword, @Param("limit") int limit);
 
     @Query(value =
-            "SELECT id, ars_id, latitude, longitude, node_id, station_name, station_type, " +
+            "SELECT id, ars_id, latitude, longitude, node_id, station_name, station_type," +
                     "ST_Distance(" +
                     "ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)::geography, " +
                     "ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography" +

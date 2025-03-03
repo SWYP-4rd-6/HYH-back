@@ -1,7 +1,6 @@
 
-###
+### GPS 좌표로 가장 가까운 정류장 검색
 GET localhost:8080/api/v1/busStations/search/nearest ? latitude=37.569808 & longitude=126.987752
 
-
-###
+### 정류소명으로 정류장 검색
 GET localhost:8080/api/v1/busStations/search/stationName ? stationName=서울역

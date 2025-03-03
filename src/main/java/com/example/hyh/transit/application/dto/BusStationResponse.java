@@ -1,15 +1,13 @@
 package com.example.hyh.transit.application.dto;
 
 import com.example.hyh.transit.domain.BusStation;
-import com.example.hyh.transit.domain.BusStationType;
 
 public record BusStationResponse(
         String nodeId,
         String arsId,
         String stationName,
         double latitude,
-        double longitude,
-        BusStationType stationType
+        double longitude
 ) {
     public static BusStationResponse of(BusStation busStation) {
         return new BusStationResponse(
@@ -17,8 +15,7 @@ public record BusStationResponse(
                 busStation.getArsId(),
                 busStation.getStationName(),
                 busStation.getLatitude(),
-                busStation.getLongitude(),
-                busStation.getStationType()
+                busStation.getLongitude()
         );
     }
 }

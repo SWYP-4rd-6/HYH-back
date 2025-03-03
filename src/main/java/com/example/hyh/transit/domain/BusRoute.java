@@ -27,6 +27,15 @@ public class BusRoute {
     @Column(name = "ars_id", nullable = false, length = 5)
     private String arsId;
 
+    @Column(name = "station_name", nullable = false)
+    private String stationName;
+
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
     protected BusRoute() {
     }
 

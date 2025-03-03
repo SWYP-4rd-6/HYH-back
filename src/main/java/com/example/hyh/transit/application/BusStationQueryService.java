@@ -4,11 +4,13 @@ import com.example.hyh.transit.application.dto.BusStationResponse;
 import com.example.hyh.transit.domain.BusStationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BusStationQueryService {
 
     private final BusStationRepository busStationRepository;
