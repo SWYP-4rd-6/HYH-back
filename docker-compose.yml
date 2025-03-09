@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgis/postgis:16-master
+    platform: linux/amd64
     container_name: postgis-container
     ports:
       - "5432:5432"
