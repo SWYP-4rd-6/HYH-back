@@ -1,0 +1,5 @@
+
+###
+//@no-log
+//@no-cookie-jar
+GET localhost:8080/api/v1/transits/search ? keyword=신림
