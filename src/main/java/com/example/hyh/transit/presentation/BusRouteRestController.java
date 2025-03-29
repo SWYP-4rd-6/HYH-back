@@ -18,8 +18,9 @@ public class BusRouteRestController {
     private final BusRouteQueryService busRouteQueryService;
 
     @GetMapping("/search/routeName")
-    public List<BusRouteResponse> searchByRouteName(@RequestParam String routeName) {
-        return busRouteQueryService.searchByRouteName(routeName);
+    public List<BusRouteResponse> searchByRouteName(@RequestParam String routeName,
+                                                    @RequestParam(defaultValue = "10") int limit) {
+        return busRouteQueryService.searchByRouteName(routeName, limit);
     }
 
 }

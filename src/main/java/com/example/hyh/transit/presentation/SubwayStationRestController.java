@@ -18,12 +18,15 @@ public class SubwayStationRestController {
     private final SubwayStationQueryService subwayStationQueryService;
 
     @GetMapping("/station/name")
-    List<SubwayStationResponse> searchBySubwayStationName(@RequestParam String stationName){
-        return subwayStationQueryService.searchBySubwayStationName(stationName);
+    List<SubwayStationResponse> searchBySubwayStationName(@RequestParam String stationName,
+                                                          @RequestParam(defaultValue = "10") int limit) {
+        return subwayStationQueryService.searchBySubwayStationName(stationName, limit);
     }
 
     @GetMapping("/station/line")
-    List<SubwayStationResponse> searchBySubwayStationLine(@RequestParam String stationLine){
-        return subwayStationQueryService.searchBySubwayStationLine(stationLine);
+    List<SubwayStationResponse> searchBySubwayStationLine(@RequestParam String stationLine,
+                                                          @RequestParam(defaultValue = "10") int limit) {
+        return subwayStationQueryService.searchBySubwayStationLine(stationLine, limit);
     }
+
 }

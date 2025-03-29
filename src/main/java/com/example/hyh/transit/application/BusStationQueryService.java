@@ -15,14 +15,14 @@ public class BusStationQueryService {
 
     private final BusStationRepository busStationRepository;
 
-    public List<BusStationResponse> searchByStationName(String stationName) {
-        return busStationRepository.searchByStationName(stationName, 10).stream()
+    public List<BusStationResponse> searchByStationName(String stationName, int limit) {
+        return busStationRepository.searchByStationName(stationName, limit).stream()
                 .map(BusStationResponse::of)
                 .toList();
     }
 
-    public List<BusStationResponse> searchNearestBusStations(double latitude, double longitude) {
-        return busStationRepository.searchNearestBusStations(latitude, longitude, 10).stream()
+    public List<BusStationResponse> searchNearestBusStations(double latitude, double longitude, int limit) {
+        return busStationRepository.searchNearestBusStations(latitude, longitude, limit).stream()
                 .map(BusStationResponse::of)
                 .toList();
     }
