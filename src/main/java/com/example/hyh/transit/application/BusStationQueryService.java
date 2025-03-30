@@ -1,11 +1,17 @@
 package com.example.hyh.transit.application;
 
-import com.example.hyh.transit.application.dto.BusStationResponse;
+import com.example.hyh.transit.application.component.GyeongiBusComponent;
+import com.example.hyh.transit.application.dto.*;
 import com.example.hyh.transit.domain.BusStationRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -13,7 +19,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BusStationQueryService {
 
+    @Value("${real-time-gyeonggi-bus-api}")
+    private String gyeongiBusKey;
+
     private final BusStationRepository busStationRepository;
+    private final GyeongiBusComponent gyeongiBusComponent;
 
     public List<BusStationResponse> searchByStationName(String stationName, int limit) {
         return busStationRepository.searchByStationName(stationName, limit).stream()
@@ -27,4 +37,17 @@ public class BusStationQueryService {
                 .toList();
     }
 
+    public List<GyeonggiBusStationIdResponse> getGyeongiBusStationId(String keyword) throws IOException {
+        String jsonResponse = gyeongiBusComponent.getGyeongiBusStationId(gyeongiBusKey, keyword, "json");
+        System.out.print(jsonResponse);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(jsonResponse);
+        JsonNode busStationListNode = root.path("response").path("msgBody");
+
+        GyeonggiBustStationResponse gyeonggiBustStationResponse = mapper.readValue(
+                busStationListNode.traverse(), new TypeReference<GyeonggiBustStationResponse>() {}
+        );
+
+        return gyeonggiBustStationResponse.gyeonggiBusStationList();
+    }
 }
