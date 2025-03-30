@@ -39,7 +39,6 @@ public class BusStationQueryService {
 
     public List<GyeonggiBusStationIdResponse> getGyeongiBusStationId(String keyword) throws IOException {
         String jsonResponse = gyeongiBusComponent.getGyeongiBusStationId(gyeongiBusKey, keyword, "json");
-        System.out.print(jsonResponse);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(jsonResponse);
         JsonNode busStationListNode = root.path("response").path("msgBody");
@@ -49,5 +48,18 @@ public class BusStationQueryService {
         );
 
         return gyeonggiBustStationResponse.gyeonggiBusStationList();
+    }
+
+    public List<GyeonggiBusRealTimeListResponse> getGyeonggiBusRealTimeById(int stationId) throws IOException {
+        String jsonResponse = gyeongiBusComponent.getGyeonggiBusRealtime(gyeongiBusKey, stationId, "json");
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(jsonResponse);
+        JsonNode busStationListNode = root.path("response").path("msgBody");
+
+        GyeonggiBusRealTimeResponse response = mapper.readValue(
+                busStationListNode.traverse(), new TypeReference<GyeonggiBusRealTimeResponse>() {}
+        );
+
+        return response.gyeonggiBusRealTimeList();
     }
 }

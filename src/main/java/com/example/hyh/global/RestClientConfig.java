@@ -32,4 +32,5 @@ public class RestClientConfig {
 
         return factory.createClient(SubwayComponent.class);
     }
+
 }
