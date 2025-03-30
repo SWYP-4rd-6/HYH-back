@@ -3,3 +3,6 @@ GET localhost:8080/api/v1/subway/search/station/name ? stationName=병
 
 ### 호선으로 전철역 검색
 GET localhost:8080/api/v1/subway/search/station/line ? stationLine=신림선
+
+### 역이름으로 실시간 전철 검색
+GET localhost:8080/api/v1/subway/search/병점/list

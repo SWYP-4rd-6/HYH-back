@@ -1,5 +1,8 @@
 package com.example.hyh.transit.application;
 
+import com.example.hyh.transit.application.component.SubwayComponent;
+import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
+import com.example.hyh.transit.application.dto.SubwayRealTimeResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
 import com.example.hyh.transit.domain.SubwayStationRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import java.util.List;
 public class SubwayStationQueryService {
 
     private final SubwayStationRepository subwayStationRepository;
+    private final SubwayComponent subwayComponent;
 
     public List<SubwayStationResponse> searchBySubwayStationName(String stationName, int limit) {
         return subwayStationRepository.searchBySubwayStationName(stationName, limit)
@@ -27,5 +31,11 @@ public class SubwayStationQueryService {
                 .stream()
                 .map(SubwayStationResponse::of)
                 .toList();
+    }
+
+    public List<SubwayRealTimeListResponse> getRealTimeSubwayList(String statnNm){
+        SubwayRealTimeResponse subwayRealTimeResponse = subwayComponent.getRealTimeSubway(0, 20, statnNm);
+
+        return subwayRealTimeResponse.arrivalList();
     }
 }

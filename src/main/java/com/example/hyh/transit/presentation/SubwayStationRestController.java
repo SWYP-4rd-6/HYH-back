@@ -1,12 +1,10 @@
 package com.example.hyh.transit.presentation;
 
 import com.example.hyh.transit.application.SubwayStationQueryService;
+import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,4 +27,8 @@ public class SubwayStationRestController {
         return subwayStationQueryService.searchBySubwayStationLine(stationLine, limit);
     }
 
+    @GetMapping("/{statnName}/list")
+    List<SubwayRealTimeListResponse> getRealTimeSubwayList(@PathVariable String statnName){
+        return subwayStationQueryService.getRealTimeSubwayList(statnName);
+    }
 }
