@@ -2,6 +2,10 @@ spring:
   application:
     name: hyh
 
+  #  별도 openapi키 가져오기
+  config:
+    import: classpath:config.yml
+
   datasource:
     url: jdbc:postgresql://localhost:5432/hyh
     username: postgres
