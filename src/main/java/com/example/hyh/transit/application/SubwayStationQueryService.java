@@ -32,10 +32,10 @@ public class SubwayStationQueryService {
                 .map(SubwayStationResponse::of)
                 .toList();
     }
-
     public List<SubwayRealTimeListResponse> getRealTimeSubwayList(String statnNm){
         SubwayRealTimeResponse subwayRealTimeResponse = subwayComponent.getRealTimeSubway(0, 20, statnNm);
 
         return subwayRealTimeResponse.arrivalList();
     }
+
 }
