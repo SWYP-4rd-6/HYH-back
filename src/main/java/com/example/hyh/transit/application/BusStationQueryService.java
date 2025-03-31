@@ -19,7 +19,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BusStationQueryService {
 
-    @Value("${real-time-gyeonggi-bus-api}")
+    @Value("${real-time-bus-api}")
     private String gyeongiBusKey;
 
     private final BusStationRepository busStationRepository;

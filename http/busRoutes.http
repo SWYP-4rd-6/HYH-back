@@ -4,9 +4,4 @@ GET localhost:8080/api/v1/busRoutes/search/routeName ? routeName=708
 
 
 ### 경유노선 전체 정류소 도착예정정보를 조회한다
-< {%
-    request.variables.set("routeId", "100100255");
-%}
-GET http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll?
-    serviceKey=vme0OXK7DbQeloAUtLNJH/MX3UEm/5kl4aYggOYV/SRJ/JL9lny6j6nteFRyovvo/uKuQXLkaFz6BdG+POC7NQ==
-    busRouteId={{routeId}}
+GET http://localhost:8080/api/v1/busRoutes/search/100100118/list
