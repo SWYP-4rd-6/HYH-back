@@ -2,11 +2,10 @@ package com.example.hyh.transit.presentation;
 
 import com.example.hyh.transit.application.BusRouteQueryService;
 import com.example.hyh.transit.application.dto.BusRouteResponse;
+import com.example.hyh.transit.application.dto.SeoulBusRealTimeAllResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,4 +22,8 @@ public class BusRouteRestController {
         return busRouteQueryService.searchByRouteName(routeName, limit);
     }
 
+    @GetMapping("/search/{routeId}/list")
+    public List<SeoulBusRealTimeAllResponse> searchSeoulBusRealTimeById(@PathVariable String routeId) throws JsonProcessingException {
+        return busRouteQueryService.searchSeoulBusRealTimeAllById(routeId);
+    }
 }
