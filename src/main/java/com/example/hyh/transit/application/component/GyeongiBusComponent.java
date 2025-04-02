@@ -18,4 +18,11 @@ public interface GyeongiBusComponent {
     String getGyeonggiBusRealtime(@RequestParam String serviceKey,
                                   @RequestParam int stationId,
                                   @RequestParam String format);
+
+    @GetExchange("/busarrivalservice/v2/getBusArrivalItemv2")
+    String getGyeonggiBusRealtimeStation(@RequestParam String serviceKey,
+                                         @RequestParam int stationId,
+                                         @RequestParam String routeId,
+                                         @RequestParam int strOrder,
+                                         @RequestParam String format);
 }

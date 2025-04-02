@@ -11,4 +11,10 @@ public interface SeoulBusComponent {
     @GetExchange("/getArrInfoByRouteAll")
     String getSeoulBusRealTimeAll(@RequestParam String serviceKey,
                                   @RequestParam String busRouteId);
+
+    @GetExchange("/getArrInfoByRoute")
+    String getSeoulBusRealTimeStation(@RequestParam String serviceKey,
+                                      @RequestParam String stationId,
+                                      @RequestParam String busRouteId,
+                                      @RequestParam int ord);
 }
