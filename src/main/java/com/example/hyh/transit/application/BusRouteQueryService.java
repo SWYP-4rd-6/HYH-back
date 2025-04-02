@@ -15,8 +15,8 @@ public class BusRouteQueryService {
 
     private final BusRouteRepository busRouteRepository;
 
-    public List<BusRouteResponse> searchByRouteName(String routeName) {
-        return busRouteRepository.searchByRouteName(routeName, 10).stream()
+    public List<BusRouteResponse> searchByRouteName(String routeName, int limit) {
+        return busRouteRepository.searchByRouteName(routeName, limit).stream()
                 .map(BusRouteResponse::of)
                 .toList();
     }

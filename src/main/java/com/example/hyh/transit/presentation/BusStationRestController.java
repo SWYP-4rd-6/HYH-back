@@ -18,14 +18,16 @@ public class BusStationRestController {
     private final BusStationQueryService busStationQueryService;
 
     @GetMapping("/search/stationName")
-    List<BusStationResponse> searchByStationName(@RequestParam String stationName) {
-        return busStationQueryService.searchByStationName(stationName);
+    List<BusStationResponse> searchByStationName(@RequestParam String stationName,
+                                                 @RequestParam(defaultValue = "10") int limit) {
+        return busStationQueryService.searchByStationName(stationName, limit);
     }
 
     @GetMapping("/search/nearest")
     List<BusStationResponse> searchNearest(@RequestParam double latitude,
-                                           @RequestParam double longitude) {
-        return busStationQueryService.searchNearestBusStations(latitude, longitude);
+                                           @RequestParam double longitude,
+                                           @RequestParam(defaultValue = "10") int limit) {
+        return busStationQueryService.searchNearestBusStations(latitude, longitude, limit);
     }
 
 }

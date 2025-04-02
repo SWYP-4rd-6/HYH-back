@@ -15,15 +15,15 @@ public class SubwayStationQueryService {
 
     private final SubwayStationRepository subwayStationRepository;
 
-    public List<SubwayStationResponse> searchBySubwayStationName(String stationName) {
-        return subwayStationRepository.searchBySubwayStationName(stationName, 10)
+    public List<SubwayStationResponse> searchBySubwayStationName(String stationName, int limit) {
+        return subwayStationRepository.searchBySubwayStationName(stationName, limit)
                 .stream()
                 .map(SubwayStationResponse::of)
                 .toList();
     }
 
-    public List<SubwayStationResponse> searchBySubwayStationLine(String stationLine) {
-        return subwayStationRepository.searchBySubwayStationLine(stationLine, 10)
+    public List<SubwayStationResponse> searchBySubwayStationLine(String stationLine, int limit) {
+        return subwayStationRepository.searchBySubwayStationLine(stationLine, limit)
                 .stream()
                 .map(SubwayStationResponse::of)
                 .toList();
