@@ -2,11 +2,14 @@ package com.example.hyh.transit.presentation;
 
 import com.example.hyh.transit.application.BusRouteQueryService;
 import com.example.hyh.transit.application.dto.BusRouteResponse;
+import com.example.hyh.transit.application.dto.GyeonggiBusRealTimeStationResponse;
 import com.example.hyh.transit.application.dto.SeoulBusRealTimeAllResponse;
+import com.example.hyh.transit.application.dto.SeoulBusRealTimeStationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,5 +28,15 @@ public class BusRouteRestController {
     @GetMapping("/search/{routeId}/list")
     public List<SeoulBusRealTimeAllResponse> searchSeoulBusRealTimeById(@PathVariable String routeId) throws JsonProcessingException {
         return busRouteQueryService.searchSeoulBusRealTimeAllById(routeId);
+    }
+
+    @GetMapping("/search/{stationId}/{routeId}/{ord}/list")
+    public List<SeoulBusRealTimeStationResponse> searchSeoulBusRealTimeStation(@PathVariable String stationId, @PathVariable String routeId, @PathVariable int ord) throws JsonProcessingException {
+        return busRouteQueryService.searchSeoulBusRealTimeStation(stationId, routeId, ord);
+    }
+
+    @GetMapping("/search/g/{stationId}/{routeId}/{ord}/list")
+    public List<GyeonggiBusRealTimeStationResponse> searchSeoulBusRealTimeStation(@PathVariable int stationId, @PathVariable String routeId, @PathVariable int ord) throws IOException {
+        return busRouteQueryService.getGyeonggiBusRealTimeStation(stationId, routeId, ord, "json");
     }
 }
