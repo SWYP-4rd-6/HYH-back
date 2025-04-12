@@ -12,10 +12,10 @@ public record TransitSearchResult(
         List<SubwayStationResponse> subwayStations
 ) {
 
-    public static TransitSearchResult of(List<BusRoute> busRoutes, List<BusStation> busStations, List<SubwayStation> subwayStations) {
+    public static TransitSearchResult of(List<BusRoute> busRoutes, List<BusStation> busStations, List<BusStationResponse> gyeonggiBusStations, List<SubwayStation> subwayStations) {
         return new TransitSearchResult(
                 BusRouteResponse.listOf(busRoutes),
-                BusStationResponse.listOf(busStations),
+                BusStationResponse.listOf(busStations, gyeonggiBusStations),
                 SubwayStationResponse.listOf(subwayStations)
         );
     }

@@ -1,11 +1,13 @@
 package com.example.hyh.transit.application;
 
+import com.example.hyh.transit.application.dto.BusStationResponse;
 import com.example.hyh.transit.application.dto.TransitSearchResult;
 import com.example.hyh.transit.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -16,13 +18,15 @@ public class TransitSearchService {
     private final BusRouteRepository busRouteRepository;
     private final BusStationRepository busStationRepository;
     private final SubwayStationRepository subwayStationRepository;
+    private final BusStationQueryService busStationQueryService;
 
-    public TransitSearchResult search(String keyword) {
+    public TransitSearchResult search(String keyword) throws IOException {
         List<BusRoute> busRouteResults = busRouteRepository.searchByRouteName(keyword, 10);
         List<BusStation> busStationResults = busStationRepository.searchByStationName(keyword, 10);
+        List<BusStationResponse> gyeonggiBusStationResults = busStationQueryService.searchByGyeonggiStationName(keyword);
         List<SubwayStation> subwayStationResults = subwayStationRepository.searchBySubwayStationName(keyword, 10);
 
-        return TransitSearchResult.of(busRouteResults, busStationResults, subwayStationResults);
+        return TransitSearchResult.of(busRouteResults, busStationResults, gyeonggiBusStationResults, subwayStationResults);
     }
 
 }

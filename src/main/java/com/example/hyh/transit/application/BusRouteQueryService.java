@@ -1,9 +1,12 @@
 package com.example.hyh.transit.application;
 
-import com.example.hyh.transit.application.component.GyeongiBusComponent;
-import com.example.hyh.transit.application.component.SeoulBusComponent;
-import com.example.hyh.transit.application.dto.*;
+import com.example.hyh.transit.application.dto.BusRouteResponse;
 import com.example.hyh.transit.domain.BusRouteRepository;
+import com.example.hyh.transit.domain.openApi.RealTimeGyeonggiBusListAtStation;
+import com.example.hyh.transit.domain.openApi.RealTimeSeoulBusByRouteAllList;
+import com.example.hyh.transit.domain.openApi.RealTimeSeoulBusListAtStation;
+import com.example.hyh.transit.infra.component.GyeonggiBusComponent;
+import com.example.hyh.transit.infra.component.SeoulBusComponent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,7 +30,7 @@ public class BusRouteQueryService {
 
     private final BusRouteRepository busRouteRepository;
     private final SeoulBusComponent seoulBusComponent;
-    private final GyeongiBusComponent gyeongiBusComponent;
+    private final GyeonggiBusComponent gyeonggiBusComponent;
 
     public List<BusRouteResponse> searchByRouteName(String routeName, int limit) {
         return busRouteRepository.searchByRouteName(routeName, limit).stream()
@@ -35,36 +38,39 @@ public class BusRouteQueryService {
                 .toList();
     }
 
-    public List<SeoulBusRealTimeAllResponse> searchSeoulBusRealTimeAllById(String routeId) throws JsonProcessingException {
+    public List<RealTimeSeoulBusByRouteAllList> searchRealSeoulBusByRouteAllList(String routeId) throws JsonProcessingException {
         String response = seoulBusComponent.getSeoulBusRealTimeAll(seoulBusKey, routeId);
         XmlMapper mapper = new XmlMapper();
         JsonNode root = mapper.readTree(response);
         JsonNode seoulBuseListNode = root.path("msgBody").path("itemList");
 
         return mapper.convertValue(
-                seoulBuseListNode, new TypeReference<List<SeoulBusRealTimeAllResponse>>() {}
+                seoulBuseListNode, new TypeReference<List<RealTimeSeoulBusByRouteAllList>>() {
+                }
         );
     }
 
-    public List<SeoulBusRealTimeStationResponse> searchSeoulBusRealTimeStation(String stationId, String routeId, int ord) throws JsonProcessingException {
+    public List<RealTimeSeoulBusListAtStation> searchSeoulBusRealTimeStation(String stationId, String routeId, int ord) throws JsonProcessingException {
         String response = seoulBusComponent.getSeoulBusRealTimeStation(seoulBusKey, stationId, routeId, ord);
         XmlMapper mapper = new XmlMapper();
         JsonNode root = mapper.readTree(response);
         JsonNode seoulBuseListNode = root.path("msgBody").path("itemList");
 
         return mapper.convertValue(
-                seoulBuseListNode, new TypeReference<List<SeoulBusRealTimeStationResponse>>() {}
+                seoulBuseListNode, new TypeReference<List<RealTimeSeoulBusListAtStation>>() {
+                }
         );
     }
 
-    public List<GyeonggiBusRealTimeStationResponse> getGyeonggiBusRealTimeStation(int stationId, String routeId, int strOrder, String format) throws IOException {
-        String jsonResponse = gyeongiBusComponent.getGyeonggiBusRealtimeStation(seoulBusKey, stationId, routeId, strOrder, format);
+    public List<RealTimeGyeonggiBusListAtStation> getGyeonggiBusRealTimeStation(int stationId, String routeId, int strOrder, String format) throws IOException {
+        String jsonResponse = gyeonggiBusComponent.getGyeonggiBusRealtimeStation(seoulBusKey, stationId, routeId, strOrder, format);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(jsonResponse);
         JsonNode busStationListNode = root.path("response").path("msgBody").path("busArrivalItem");
 
         return mapper.readValue(
-                busStationListNode.traverse(), new TypeReference<List<GyeonggiBusRealTimeStationResponse>>() {}
+                busStationListNode.traverse(), new TypeReference<List<RealTimeGyeonggiBusListAtStation>>() {
+                }
         );
     }
 }

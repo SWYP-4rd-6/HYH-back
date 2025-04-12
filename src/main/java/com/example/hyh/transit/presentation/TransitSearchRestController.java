@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/v1/transits")
 @RequiredArgsConstructor
@@ -16,7 +18,7 @@ public class TransitSearchRestController {
     private final TransitSearchService transitSearchService;
 
     @GetMapping("/search")
-    public TransitSearchResult search(@RequestParam String keyword) {
+    public TransitSearchResult search(@RequestParam String keyword) throws IOException {
         return transitSearchService.search(keyword);
     }
 

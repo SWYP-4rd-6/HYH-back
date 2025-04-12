@@ -16,7 +16,7 @@ public class BusStation {
     private String nodeId;
 
     @Column(name = "ars_id", nullable = false, length = 5)
-    private String arsId;
+    private String stId;
 
     @Column(name = "station_name", nullable = false)
     private String stationName;

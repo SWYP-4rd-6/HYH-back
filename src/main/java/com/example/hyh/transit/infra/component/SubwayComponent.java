@@ -1,4 +1,4 @@
-package com.example.hyh.transit.application.component;
+package com.example.hyh.transit.infra.component;
 
 import com.example.hyh.transit.application.dto.SubwayRealTimeResponse;
 import org.springframework.stereotype.Component;

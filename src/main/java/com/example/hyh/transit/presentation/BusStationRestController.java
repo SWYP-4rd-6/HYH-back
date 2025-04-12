@@ -2,11 +2,13 @@ package com.example.hyh.transit.presentation;
 
 import com.example.hyh.transit.application.BusStationQueryService;
 import com.example.hyh.transit.application.dto.BusStationResponse;
-import com.example.hyh.transit.application.dto.GyeonggiBusRealTimeListResponse;
-import com.example.hyh.transit.application.dto.GyeonggiBusRealTimeResponse;
-import com.example.hyh.transit.application.dto.GyeonggiBusStationIdResponse;
+import com.example.hyh.transit.application.dto.CityType;
+import com.example.hyh.transit.application.dto.RealTimeBusListAtStationResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +22,7 @@ public class BusStationRestController {
 
     @GetMapping("/search/stationName")
     List<BusStationResponse> searchByStationName(@RequestParam String stationName,
-                                                 @RequestParam(defaultValue = "10") int limit) {
+                                                 @RequestParam(defaultValue = "10") int limit) throws IOException {
         return busStationQueryService.searchByStationName(stationName, limit);
     }
 
@@ -31,13 +33,10 @@ public class BusStationRestController {
         return busStationQueryService.searchNearestBusStations(latitude, longitude, limit);
     }
 
-    @GetMapping("/search/gyeongiBus")
-    List<GyeonggiBusStationIdResponse> searchByGyeonggiBusStationName(@RequestParam String stationName) throws IOException {
-        return busStationQueryService.getGyeongiBusStationId(stationName);
-    }
-
-    @GetMapping("/search/{stationId}/list")
-    List<GyeonggiBusRealTimeListResponse> searchGyeonggiBusRealTimeById(@PathVariable int stationId) throws IOException {
-        return busStationQueryService.getGyeonggiBusRealTimeById(stationId);
+    @GetMapping("/search/RealTimeStation")
+    List<RealTimeBusListAtStationResponse> searchRealBusListByStationId(@RequestParam int stId,
+                                                                        @RequestParam CityType type) throws IOException {
+        return type.equals(CityType.SEOUL) ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
+                : busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList();
     }
 }

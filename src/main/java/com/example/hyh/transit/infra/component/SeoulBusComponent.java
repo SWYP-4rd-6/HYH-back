@@ -1,4 +1,4 @@
-package com.example.hyh.transit.application.component;
+package com.example.hyh.transit.infra.component;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +11,10 @@ public interface SeoulBusComponent {
     @GetExchange("/getArrInfoByRouteAll")
     String getSeoulBusRealTimeAll(@RequestParam String serviceKey,
                                   @RequestParam String busRouteId);
+
+    @GetExchange("/getLowArrInfoByStIdList")
+    String getRealTimeSeoulBusListByStationId(@RequestParam String serviceKey,
+                                              @RequestParam int stId);
 
     @GetExchange("/getArrInfoByRoute")
     String getSeoulBusRealTimeStation(@RequestParam String serviceKey,

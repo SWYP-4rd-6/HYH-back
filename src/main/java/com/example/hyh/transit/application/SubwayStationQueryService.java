@@ -1,10 +1,10 @@
 package com.example.hyh.transit.application;
 
-import com.example.hyh.transit.application.component.SubwayComponent;
 import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
 import com.example.hyh.transit.application.dto.SubwayRealTimeResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
 import com.example.hyh.transit.domain.SubwayStationRepository;
+import com.example.hyh.transit.infra.component.SubwayComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +32,8 @@ public class SubwayStationQueryService {
                 .map(SubwayStationResponse::of)
                 .toList();
     }
-    public List<SubwayRealTimeListResponse> getRealTimeSubwayList(String statnNm){
+
+    public List<SubwayRealTimeListResponse> getRealTimeSubwayList(String statnNm) {
         SubwayRealTimeResponse subwayRealTimeResponse = subwayComponent.getRealTimeSubway(0, 20, statnNm);
 
         return subwayRealTimeResponse.arrivalList();
