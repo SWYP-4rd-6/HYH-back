@@ -3,10 +3,7 @@
 GET localhost:8080/api/v1/busStations/search/nearest ? latitude=37.569808 & longitude=126.987752
 
 ### 정류소명으로 정류장 검색
-GET localhost:8080/api/v1/busStations/search/stationName ? stationName=이촌
+GET localhost:8080/api/v1/busStations/search/stationName ? stationName=동탄
 
-### 정류소명으로 정류장 검색(경기도)
-GET localhost:8080/api/v1/busStations/search/gyeongiBus ? stationName=동탄
-
-### 정류소 실시간 조회(경기도)
-GET localhost:8080/api/v1/busStations/search/233002377/list
+### 정류소 실시간 조회
+GET localhost:8080/api/v1/busStations/search/realTimeStation ? stId=200000150&code=1

@@ -25,7 +25,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BusRouteQueryService {
 
-    @Value("${real-time-bus-api}")
+    @Value("${bus-api-key}")
     private String seoulBusKey;
 
     private final BusRouteRepository busRouteRepository;

@@ -33,10 +33,10 @@ public class BusStationRestController {
         return busStationQueryService.searchNearestBusStations(latitude, longitude, limit);
     }
 
-    @GetMapping("/search/RealTimeStation")
+    @GetMapping("/search/realTimeStation")
     List<RealTimeBusListAtStationResponse> searchRealBusListByStationId(@RequestParam int stId,
-                                                                        @RequestParam CityType type) throws IOException {
-        return type.equals(CityType.SEOUL) ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
+                                                                        @RequestParam int code) throws IOException {
+        return code == CityType.SEOUL.getCode() ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
                 : busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList();
     }
 }

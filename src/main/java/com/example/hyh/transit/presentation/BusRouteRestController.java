@@ -28,8 +28,8 @@ public class BusRouteRestController {
 
     @GetMapping("/search/{routeId}/list")
     public List<RealTimeBusByRouteAllList> searchSeoulBusRealTimeById(@PathVariable String routeId,
-                                                                      @RequestParam CityType type) throws JsonProcessingException {
-        return type.equals(CityType.SEOUL) ? busRouteQueryService.searchRealSeoulBusByRouteAllList(routeId).stream().map(RealTimeBusByRouteAllList::of).toList()
+                                                                      @RequestParam int code) throws JsonProcessingException {
+        return code == CityType.SEOUL.getCode() ? busRouteQueryService.searchRealSeoulBusByRouteAllList(routeId).stream().map(RealTimeBusByRouteAllList::of).toList()
                 : null;
     }
 

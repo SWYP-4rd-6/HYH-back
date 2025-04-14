@@ -13,7 +13,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class RestClientConfig {
 
-    @Value("${real-time-subway-api}")
+    @Value("${subway-api-key}")
     private String subwayKey;
 
     @Bean

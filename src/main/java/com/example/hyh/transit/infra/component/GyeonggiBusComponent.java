@@ -16,7 +16,7 @@ public interface GyeonggiBusComponent {
 
     @GetExchange("/busarrivalservice/v2/getBusArrivalListv2")
     String getRealTimeGyeonggiBusListByStationId(@RequestParam String serviceKey,
-                                                 @RequestParam int stId,
+                                                 @RequestParam int stationId,
                                                  @RequestParam String format);
 
     @GetExchange("/busarrivalservice/v2/getBusArrivalItemv2")

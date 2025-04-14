@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class BusStationQueryService {
 
-    @Value("${real-time-bus-api}")
+    @Value("${bus-api-key}")
     private String busKey;
 
     private final BusStationRepository busStationRepository;
@@ -65,7 +65,7 @@ public class BusStationQueryService {
         String jsonResponse = gyeonggiBusComponent.getRealTimeGyeonggiBusListByStationId(busKey, stId, "json");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(jsonResponse);
-        JsonNode gyeonggiBusListNode = root.path("response").path("msgBody");
+        JsonNode gyeonggiBusListNode = root.path("response").path("msgBody").path("busArrivalList");
 
         return mapper.readValue(
                 gyeonggiBusListNode.traverse(), new TypeReference<List<RealTimeGyeonggiBusListAtStation>>() {

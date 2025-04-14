@@ -12,7 +12,7 @@ public interface SeoulBusComponent {
     String getSeoulBusRealTimeAll(@RequestParam String serviceKey,
                                   @RequestParam String busRouteId);
 
-    @GetExchange("/getLowArrInfoByStIdList")
+    @GetExchange("/getLowArrInfoByStId")
     String getRealTimeSeoulBusListByStationId(@RequestParam String serviceKey,
                                               @RequestParam int stId);
 
