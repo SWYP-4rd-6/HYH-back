@@ -2,6 +2,7 @@ package com.example.hyh.transit.application.dto;
 
 import com.example.hyh.transit.domain.BusStation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,8 +10,8 @@ public record BusStationResponse(
         String nodeId,
         String stId,
         String stationName,
-        java.math.BigDecimal latitude,
-        java.math.BigDecimal longitude
+        BigDecimal latitude,
+        BigDecimal longitude
 ) {
     public static BusStationResponse of(BusStation busStation) {
         return new BusStationResponse(
