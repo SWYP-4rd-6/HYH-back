@@ -30,5 +30,10 @@ public class SubwayStationRestController {
     @GetMapping("/{statnName}/list")
     List<SubwayRealTimeListResponse> getRealTimeSubwayList(@PathVariable String statnName){
         return subwayStationQueryService.getRealTimeSubwayList(statnName);
+    @GetMapping("/{stCd}/{weekTag}/{inOutTag}")
+    List<SubwayTimeTableResponse> searchSubwayTimeTableList(@PathVariable String stCd,
+                                                            @PathVariable String weekTag,
+                                                            @PathVariable String inOutTag) {
+        return subwayStationQueryService.searchSubwayTimeTableList(stCd, weekTag, inOutTag);
     }
 }

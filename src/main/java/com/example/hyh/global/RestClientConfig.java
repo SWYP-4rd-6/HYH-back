@@ -41,6 +41,13 @@ public class RestClientConfig {
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
 
         return factory.createClient(SubwayComponent.class);
+    @Bean
+    public SubwayTimeTableApiClient subwayTimeTableService() {
+        RestClient restClient = RestClient.builder().baseUrl("http://openAPI.seoul.go.kr:8088/" + subwayTimeTableKey).build();
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+
+        return factory.createClient(SubwayTimeTableApiClient.class);
     }
 
 }
