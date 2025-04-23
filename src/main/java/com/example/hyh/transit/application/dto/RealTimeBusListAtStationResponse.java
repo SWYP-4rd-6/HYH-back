@@ -18,30 +18,30 @@ public record RealTimeBusListAtStationResponse(
         String mkTm
 ) {
     public static RealTimeBusListAtStationResponse of(RealTimeSeoulBusListAtStation seoulBus) {
-        return new RealTimeBusListAtStationResponse(seoulBus.getStId(),
-                seoulBus.getBusRouteId(),
-                seoulBus.getBusRouteAbrv(),
-                seoulBus.getPlainNo1(),
-                seoulBus.getPlainNo2(),
-                seoulBus.getBusType1(),
-                seoulBus.getBusType2(),
-                seoulBus.getExps1(),
-                seoulBus.getExps2(),
-                seoulBus.getArrmsg1(),
-                seoulBus.getArrmsg2(),
-                seoulBus.getMkTm());
+        return new RealTimeBusListAtStationResponse(seoulBus.stId(),
+                seoulBus.busRouteId(),
+                seoulBus.busRouteAbrv(),
+                seoulBus.plainNo1(),
+                seoulBus.plainNo2(),
+                seoulBus.busType1(),
+                seoulBus.busType2(),
+                seoulBus.exps1(),
+                seoulBus.exps2(),
+                seoulBus.arrmsg1(),
+                seoulBus.arrmsg2(),
+                seoulBus.mkTm());
     }
 
     public static RealTimeBusListAtStationResponse of(RealTimeGyeonggiBusListAtStation gyeonggiBus) {
-        return new RealTimeBusListAtStationResponse(gyeonggiBus.getStationId(),
-                gyeonggiBus.getRouteId(),
-                gyeonggiBus.getRouteName(),
-                gyeonggiBus.getPlateNo1(),
-                gyeonggiBus.getPlateNo2(),
-                gyeonggiBus.getLowPlate1(),
-                gyeonggiBus.getLowPlate2(),
-                gyeonggiBus.getPredictTimeSec1(),
-                gyeonggiBus.getPredictTimeSec2(),
+        return new RealTimeBusListAtStationResponse(gyeonggiBus.stationId(),
+                gyeonggiBus.routeId(),
+                gyeonggiBus.routeName(),
+                gyeonggiBus.plateNo1(),
+                gyeonggiBus.plateNo2(),
+                gyeonggiBus.lowPlate1(),
+                gyeonggiBus.lowPlate2(),
+                gyeonggiBus.predictTimeSec1(),
+                gyeonggiBus.predictTimeSec2(),
                 null,
                 null,
                 null);

@@ -1,12 +1,12 @@
 package com.example.hyh.transit.application;
 
 import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
-import com.example.hyh.transit.application.dto.SubwayRealTimeResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
 import com.example.hyh.transit.application.dto.SubwayTimeTableResponse;
 import com.example.hyh.transit.domain.SubwayStationRepository;
-import com.example.hyh.transit.infra.component.SubwayComponent;
+import com.example.hyh.transit.infra.apiclient.SubwayApiClient;
 import com.example.hyh.transit.infra.apiclient.SubwayTimeTableApiClient;
+import com.example.hyh.transit.infra.apiclient.dto.SubwayRealTime;
 import com.example.hyh.transit.infra.apiclient.dto.SubwayTimeTableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
 public class SubwayStationQueryService {
 
     private final SubwayStationRepository subwayStationRepository;
-    private final SubwayComponent subwayComponent;
+    private final SubwayApiClient subwayApiClient;
     private final SubwayTimeTableApiClient subwayTimeTableApiClient;
 
     public List<SubwayStationResponse> searchBySubwayStationName(String stationName, int limit) {
@@ -37,10 +37,12 @@ public class SubwayStationQueryService {
                 .toList();
     }
 
-    public List<SubwayRealTimeListResponse> getRealTimeSubwayList(String statnNm) {
-        SubwayRealTimeResponse subwayRealTimeResponse = subwayComponent.getRealTimeSubway(0, 20, statnNm);
+    public List<SubwayRealTimeListResponse> searchRealTimeSubwayList(String statnNm) {
+        SubwayRealTime subwayRealTime = subwayApiClient.getRealTimeSubway(0, 20, statnNm);
 
-        return subwayRealTimeResponse.arrivalList();
+        return subwayRealTime.arrivalList();
+    }
+
     public List<SubwayTimeTableResponse> searchSubwayTimeTableList(String stCd,
                                                                    String weekTag,
                                                                    String inOutTag) {

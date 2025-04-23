@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CityType {
-    SEOUL(0),
+    SEOUL(11),
     Gyeonggi_Do(1);
 
     private final int code;

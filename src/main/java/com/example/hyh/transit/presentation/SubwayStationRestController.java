@@ -3,6 +3,7 @@ package com.example.hyh.transit.presentation;
 import com.example.hyh.transit.application.SubwayStationQueryService;
 import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
+import com.example.hyh.transit.application.dto.SubwayTimeTableResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,10 @@ public class SubwayStationRestController {
     }
 
     @GetMapping("/{statnName}/list")
-    List<SubwayRealTimeListResponse> getRealTimeSubwayList(@PathVariable String statnName){
-        return subwayStationQueryService.getRealTimeSubwayList(statnName);
+    List<SubwayRealTimeListResponse> searchRealTimeSubwayList(@PathVariable String statnName) {
+        return subwayStationQueryService.searchRealTimeSubwayList(statnName);
+    }
+
     @GetMapping("/{stCd}/{weekTag}/{inOutTag}")
     List<SubwayTimeTableResponse> searchSubwayTimeTableList(@PathVariable String stCd,
                                                             @PathVariable String weekTag,

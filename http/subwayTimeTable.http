@@ -1,0 +1,2 @@
+### 지하철역 시간표 조회
+GET localhost:8080/api/v1/subway/search/2561/1/1

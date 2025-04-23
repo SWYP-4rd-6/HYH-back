@@ -3,14 +3,11 @@ package com.example.hyh.transit.presentation;
 import com.example.hyh.transit.application.BusRouteQueryService;
 import com.example.hyh.transit.application.dto.BusRouteResponse;
 import com.example.hyh.transit.application.dto.CityType;
-import com.example.hyh.transit.application.dto.RealTimeBusByRouteAllList;
-import com.example.hyh.transit.domain.openApi.RealTimeGyeonggiBusListAtStation;
-import com.example.hyh.transit.domain.openApi.RealTimeSeoulBusListAtStation;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.hyh.transit.application.dto.RealTimeBusByRouteAllListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,20 +23,11 @@ public class BusRouteRestController {
         return busRouteQueryService.searchByRouteName(routeName, limit);
     }
 
-    @GetMapping("/search/{routeId}/list")
-    public List<RealTimeBusByRouteAllList> searchSeoulBusRealTimeById(@PathVariable String routeId,
-                                                                      @RequestParam int code) throws JsonProcessingException {
-        return code == CityType.SEOUL.getCode() ? busRouteQueryService.searchRealSeoulBusByRouteAllList(routeId).stream().map(RealTimeBusByRouteAllList::of).toList()
+    @GetMapping(value = "/search/{routeId}/list",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<RealTimeBusByRouteAllListResponse> searchSeoulBusRealTimeById(@PathVariable String routeId,
+                                                                              @RequestParam int code) {
+        return code == CityType.SEOUL.getCode() ? busRouteQueryService.searchRealSeoulBusByRouteAllList(routeId).stream().map(RealTimeBusByRouteAllListResponse::of).toList()
                 : null;
-    }
-
-    @GetMapping("/search/{stationId}/{routeId}/{ord}/list")
-    public List<RealTimeSeoulBusListAtStation> searchSeoulBusRealTimeStation(@PathVariable String stationId, @PathVariable String routeId, @PathVariable int ord) throws JsonProcessingException {
-        return busRouteQueryService.searchSeoulBusRealTimeStation(stationId, routeId, ord);
-    }
-
-    @GetMapping("/search/g/{stationId}/{routeId}/{ord}/list")
-    public List<RealTimeGyeonggiBusListAtStation> searchSeoulBusRealTimeStation(@PathVariable int stationId, @PathVariable String routeId, @PathVariable int ord) throws IOException {
-        return busRouteQueryService.getGyeonggiBusRealTimeStation(stationId, routeId, ord, "json");
     }
 }

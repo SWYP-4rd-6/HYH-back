@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,7 +21,7 @@ public class BusStationRestController {
 
     @GetMapping("/search/stationName")
     List<BusStationResponse> searchByStationName(@RequestParam String stationName,
-                                                 @RequestParam(defaultValue = "10") int limit) throws IOException {
+                                                 @RequestParam(defaultValue = "10") int limit) {
         return busStationQueryService.searchByStationName(stationName, limit);
     }
 
@@ -35,7 +34,7 @@ public class BusStationRestController {
 
     @GetMapping("/search/realTimeStation")
     List<RealTimeBusListAtStationResponse> searchRealBusListByStationId(@RequestParam int stId,
-                                                                        @RequestParam int code) throws IOException {
+                                                                        @RequestParam int code) {
         return code == CityType.SEOUL.getCode() ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
                 : busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList();
     }
