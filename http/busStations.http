@@ -3,4 +3,12 @@
 GET localhost:8080/api/v1/busStations/search/nearest ? latitude=37.569808 & longitude=126.987752
 
 ### 정류소명으로 정류장 검색
-GET localhost:8080/api/v1/busStations/search/stationName ? stationName=서울역
+GET localhost:8080/api/v1/busStations/search/stationName ? stationName=동탄
+
+
+
+### 서울 정류소 실시간 조회
+GET localhost:8080/api/v1/busStations/search/realTimeStation ? stId=112000001&code=0
+
+### 경기 정류소 실시간 조회
+GET localhost:8080/api/v1/busStations/search/realTimeStation ? stId=233000070&code=1

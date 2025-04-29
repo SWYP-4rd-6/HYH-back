@@ -1,3 +1,7 @@
 
 ### 노선 이름으로 노선 검색
-GET localhost:8080/api/v1/busRoutes/search/routeName ? routeName=5516
+GET localhost:8080/api/v1/busRoutes/search/routeName ? routeName=708
+
+
+### 경유노선 전체 정류소 도착예정정보를 조회한다
+GET http://localhost:8080/api/v1/busRoutes/search/100100118/list ? code=0

@@ -23,4 +23,10 @@ public class SubwayStation {
 
     @Column(name = "subway_station_line", nullable = false)
     private String subwayStationLine;
+
+    @Column(name = "station_cd", nullable = false)
+    private String stationCd;
+
+    @Column(name = "fr_code", nullable = false)
+    private String frCode;
 }

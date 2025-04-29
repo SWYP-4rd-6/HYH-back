@@ -2,6 +2,8 @@ package com.example.hyh.transit.presentation;
 
 import com.example.hyh.transit.application.BusStationQueryService;
 import com.example.hyh.transit.application.dto.BusStationResponse;
+import com.example.hyh.transit.application.dto.CityType;
+import com.example.hyh.transit.application.dto.RealTimeBusListAtStationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,4 +32,10 @@ public class BusStationRestController {
         return busStationQueryService.searchNearestBusStations(latitude, longitude, limit);
     }
 
+    @GetMapping("/search/realTimeStation")
+    List<RealTimeBusListAtStationResponse> searchRealBusListByStationId(@RequestParam int stId,
+                                                                        @RequestParam int code) {
+        return code == CityType.SEOUL.getCode() ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
+                : busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList();
+    }
 }

@@ -2,19 +2,21 @@ package com.example.hyh.transit.application.dto;
 
 import com.example.hyh.transit.domain.BusStation;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record BusStationResponse(
         String nodeId,
-        String arsId,
+        String stId,
         String stationName,
-        double latitude,
-        double longitude
+        BigDecimal latitude,
+        BigDecimal longitude
 ) {
     public static BusStationResponse of(BusStation busStation) {
         return new BusStationResponse(
-                busStation.getNodeId(),
-                busStation.getArsId(),
+                busStation.getStationId(),
+                busStation.getOriginStationId(),
                 busStation.getStationName(),
                 busStation.getLatitude(),
                 busStation.getLongitude()
@@ -22,9 +24,11 @@ public record BusStationResponse(
     }
 
     public static List<BusStationResponse> listOf(List<BusStation> busStations) {
-        return busStations.stream()
+        List<BusStationResponse> busStationResponses = busStations.stream()
                 .map(BusStationResponse::of)
-                .toList();
+                .collect(Collectors.toList());
+
+        return busStationResponses;
     }
 
 }

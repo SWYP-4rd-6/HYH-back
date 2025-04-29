@@ -23,6 +23,10 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // json parsing
+    implementation("com.googlecode.json-simple:json-simple:1.1.1")
+    // xml
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.3")
 
     runtimeOnly("org.postgresql:postgresql")
 

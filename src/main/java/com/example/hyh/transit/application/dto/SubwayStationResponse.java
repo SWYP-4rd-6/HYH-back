@@ -8,14 +8,18 @@ public record SubwayStationResponse(
         int subwayId,
         Long subwayStationId,
         String subwayStationName,
-        String subwayStationLine
+        String subwayStationLine,
+        String stationCd,
+        String frCode
 ) {
     public static SubwayStationResponse of(SubwayStation subwayStation) {
         return new SubwayStationResponse(
                 subwayStation.getSubwayId(),
                 subwayStation.getSubwayStationId(),
                 subwayStation.getSubwayStationName(),
-                subwayStation.getSubwayStationLine()
+                subwayStation.getSubwayStationLine(),
+                subwayStation.getStationCd(),
+                subwayStation.getFrCode()
         );
     }
 
