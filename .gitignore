@@ -38,3 +38,5 @@ out/
 
 /src/main/resources/config.yml
 /src/main/resources/application-local.yml
+
+/http/http-client.env.json
