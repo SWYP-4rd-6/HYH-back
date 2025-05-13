@@ -9,6 +9,7 @@ import com.example.hyh.weather.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -33,6 +34,7 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
 
 
     @Override
+    @Cacheable(value = "weatherData", key = "#depth1 + '_' + #depth2 + '_' + #depth3")
     public @NotNull CurrentWeather fetchCurrentWeather(@NotNull String depth1,
                                                        @Nullable String depth2,
                                                        @Nullable String depth3) {
