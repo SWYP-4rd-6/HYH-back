@@ -27,7 +27,10 @@ dependencies {
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
     // xml
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.3")
-
+    // cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    
     runtimeOnly("org.postgresql:postgresql")
 
     testRuntimeOnly("com.h2database:h2")
