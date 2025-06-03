@@ -6,18 +6,7 @@ spring:
   config:
     import: classpath:config.yml
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/hyh
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect

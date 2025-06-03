@@ -24,9 +24,9 @@ public class SubwayStation {
     @Column(name = "subway_station_line", nullable = false)
     private String subwayStationLine;
 
-    @Column(name = "station_cd", nullable = false)
+    @Column(name = "station_cd")
     private String stationCd;
 
-    @Column(name = "fr_code", nullable = false)
+    @Column(name = "fr_code")
     private String frCode;
 }
