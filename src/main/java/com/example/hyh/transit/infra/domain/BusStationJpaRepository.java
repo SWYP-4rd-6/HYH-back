@@ -13,6 +13,7 @@ public interface BusStationJpaRepository extends JpaRepository<BusStation, Long>
     @Query("SELECT b FROM BusStation b WHERE b.stationName LIKE %:keyword% ORDER BY b.stationName LIMIT :limit")
     List<BusStation> searchByStationName(@Param("keyword") String keyword, @Param("limit") int limit);
 
+    // FIXME: 오류 수정 필요
     @Query(value =
             "SELECT id, ars_id, latitude, longitude, node_id, station_name, station_type," +
                     "ST_Distance(" +
