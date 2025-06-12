@@ -1,9 +1,15 @@
 package com.example.hyh.auth.application;
 
 import com.example.hyh.auth.application.exception.InvalidTokenException;
+import com.example.hyh.auth.domain.TokenPort;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +17,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class TokenService {
+public class TokenService implements TokenPort {
 
     private final SecretKey secretKey;
     private final long accessTokenValidTime;
@@ -25,9 +31,11 @@ public class TokenService {
         this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
-    public String generateAccessToken(String memberId) {
+    @Override
+    public @NotNull String generateAccessToken(@NotNull String memberId) {
         Claims claims = Jwts.claims()
                 .subject(memberId)
+                .add("memberId", memberId)
                 .build();
         Date now = new Date();
         Date expiredAt = new Date(now.getTime() + accessTokenValidTime);
@@ -39,7 +47,8 @@ public class TokenService {
                 .compact();
     }
 
-    public String generateRefreshToken(String token) {
+    @Override
+    public @NotNull String generateRefreshToken(@NotNull String token) {
         Claims claims = parseJwtClaims(token);
         Date now = new Date();
         Date expiredAt = new Date(now.getTime() + refreshTokenValidTime);
@@ -52,30 +61,38 @@ public class TokenService {
                 .compact();
     }
 
-    public Claims validateToken(String token) {
+    @Override
+    public boolean isValidToken(@Nullable String token) {
         try {
-            return parseJwtClaims(token);
+            parseJwtClaims(token);
+            return true;
         } catch (Exception e) {
-            // TODO 상세 예외 처리
-            throw new InvalidTokenException();
+            return false;
         }
     }
 
-    private Claims parseJwtClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+    @Override
+    public @NotNull String extractMemberId(@NotNull String token) {
+        return parseJwtClaims(token)
+                .get("memberId", String.class);
     }
 
-    public String getMemberId(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+    private Claims parseJwtClaims(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException("만료된 토큰입니다.");
+        } catch (MalformedJwtException e) {
+            throw new InvalidTokenException("잘못된 형식의 토큰입니다.");
+        } catch (SignatureException e) {
+            throw new InvalidTokenException("토큰 서명이 유효하지 않습니다.");
+        } catch (Exception e) {
+            throw new InvalidTokenException("토큰 검증 중 오류가 발생했습니다.");
+        }
     }
 
 }

@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             try {
-                if (tokenService.validateToken(token) != null) {
+                if (tokenService.isValidToken(token)) {
                     setAuthentication(token);
                 }
             } catch (Exception e) {
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String token) {
         try {
-            String memberId = tokenService.getMemberId(token);
+            String memberId = tokenService.extractMemberId(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
