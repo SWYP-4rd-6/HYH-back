@@ -1,5 +1,6 @@
 package com.example.hyh.transit.presentation;
 
+import com.example.hyh.global.dto.Response;
 import com.example.hyh.transit.application.TransitSearchService;
 import com.example.hyh.transit.application.dto.TransitSearchResult;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class TransitSearchRestController {
     private final TransitSearchService transitSearchService;
 
     @GetMapping("/search")
-    public TransitSearchResult search(@RequestParam String keyword) {
-        return transitSearchService.search(keyword);
+    public Response<TransitSearchResult> search(@RequestParam String keyword) {
+        return Response.success(transitSearchService.search(keyword));
     }
 
 }
