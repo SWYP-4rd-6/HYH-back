@@ -1,5 +1,6 @@
 package com.example.hyh.transit.presentation;
 
+import com.example.hyh.global.dto.Response;
 import com.example.hyh.transit.application.SubwayStationQueryService;
 import com.example.hyh.transit.application.dto.SubwayRealTimeListResponse;
 import com.example.hyh.transit.application.dto.SubwayStationResponse;
@@ -17,26 +18,26 @@ public class SubwayStationRestController {
     private final SubwayStationQueryService subwayStationQueryService;
 
     @GetMapping("/station/name")
-    List<SubwayStationResponse> searchBySubwayStationName(@RequestParam String stationName,
-                                                          @RequestParam(defaultValue = "10") int limit) {
-        return subwayStationQueryService.searchBySubwayStationName(stationName, limit);
+    public Response<List<SubwayStationResponse>> searchBySubwayStationName(@RequestParam String stationName,
+                                                                           @RequestParam(defaultValue = "10") int limit) {
+        return Response.success(subwayStationQueryService.searchBySubwayStationName(stationName, limit));
     }
 
     @GetMapping("/station/line")
-    List<SubwayStationResponse> searchBySubwayStationLine(@RequestParam String stationLine,
-                                                          @RequestParam(defaultValue = "10") int limit) {
-        return subwayStationQueryService.searchBySubwayStationLine(stationLine, limit);
+    public Response<List<SubwayStationResponse>> searchBySubwayStationLine(@RequestParam String stationLine,
+                                                                           @RequestParam(defaultValue = "10") int limit) {
+        return Response.success(subwayStationQueryService.searchBySubwayStationLine(stationLine, limit));
     }
 
     @GetMapping("/{statnName}/list")
-    List<SubwayRealTimeListResponse> searchRealTimeSubwayList(@PathVariable String statnName) {
-        return subwayStationQueryService.searchRealTimeSubwayList(statnName);
+    public Response<List<SubwayRealTimeListResponse>> searchRealTimeSubwayList(@PathVariable String statnName) {
+        return Response.success(subwayStationQueryService.searchRealTimeSubwayList(statnName));
     }
 
     @GetMapping("/{stCd}/{weekTag}/{inOutTag}")
-    List<SubwayTimeTableResponse> searchSubwayTimeTableList(@PathVariable String stCd,
-                                                            @PathVariable String weekTag,
-                                                            @PathVariable String inOutTag) {
-        return subwayStationQueryService.searchSubwayTimeTableList(stCd, weekTag, inOutTag);
+    public Response<List<SubwayTimeTableResponse>> searchSubwayTimeTableList(@PathVariable String stCd,
+                                                                             @PathVariable String weekTag,
+                                                                             @PathVariable String inOutTag) {
+        return Response.success(subwayStationQueryService.searchSubwayTimeTableList(stCd, weekTag, inOutTag));
     }
 }
