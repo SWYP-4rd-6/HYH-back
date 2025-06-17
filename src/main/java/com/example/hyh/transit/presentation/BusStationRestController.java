@@ -1,5 +1,6 @@
 package com.example.hyh.transit.presentation;
 
+import com.example.hyh.global.dto.Response;
 import com.example.hyh.transit.application.BusStationQueryService;
 import com.example.hyh.transit.application.dto.BusStationResponse;
 import com.example.hyh.transit.application.dto.CityType;
@@ -20,22 +21,23 @@ public class BusStationRestController {
     private final BusStationQueryService busStationQueryService;
 
     @GetMapping("/search/stationName")
-    List<BusStationResponse> searchByStationName(@RequestParam String stationName,
-                                                 @RequestParam(defaultValue = "10") int limit) {
-        return busStationQueryService.searchByStationName(stationName, limit);
+    public Response<List<BusStationResponse>> searchByStationName(@RequestParam String stationName,
+                                                                  @RequestParam(defaultValue = "10") int limit) {
+        return Response.success(busStationQueryService.searchByStationName(stationName, limit));
     }
 
     @GetMapping("/search/nearest")
-    List<BusStationResponse> searchNearest(@RequestParam double latitude,
-                                           @RequestParam double longitude,
-                                           @RequestParam(defaultValue = "10") int limit) {
-        return busStationQueryService.searchNearestBusStations(latitude, longitude, limit);
+    public Response<List<BusStationResponse>> searchNearest(@RequestParam double latitude,
+                                                            @RequestParam double longitude,
+                                                            @RequestParam(defaultValue = "10") int limit) {
+        return Response.success(busStationQueryService.searchNearestBusStations(latitude, longitude, limit));
     }
 
     @GetMapping("/search/realTimeStation")
-    List<RealTimeBusListAtStationResponse> searchRealBusListByStationId(@RequestParam int stId,
-                                                                        @RequestParam int code) {
-        return code == CityType.SEOUL.getCode() ? busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList()
-                : busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList();
+    public Response<List<RealTimeBusListAtStationResponse>> searchRealBusListByStationId(@RequestParam int stId,
+                                                                                         @RequestParam int code) {
+        return code == CityType.SEOUL.getCode() ?
+                Response.success(busStationQueryService.searchRealSeoulBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList())
+                : Response.success(busStationQueryService.searchRealGyeonggiBusListByStationId(stId).stream().map(RealTimeBusListAtStationResponse::of).toList());
     }
 }
