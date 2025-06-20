@@ -26,8 +26,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/auth/logout").authenticated()
-                        .requestMatchers("/api/v1/auth/refresh").authenticated()
+                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/logout").permitAll()
                         .requestMatchers("/api/v1/auth/validate").authenticated()
                         .requestMatchers("/api/v1/members/**").authenticated()
                         // TODO 권한 설정

@@ -2,6 +2,7 @@ package com.example.hyh.auth.infra.provider.kakao;
 
 import com.example.hyh.auth.application.AuthMemberService;
 import com.example.hyh.auth.application.LoginStrategy;
+import com.example.hyh.auth.application.RefreshTokenService;
 import com.example.hyh.auth.application.TokenService;
 import com.example.hyh.auth.application.dto.LoginCommand;
 import com.example.hyh.auth.application.dto.LoginResponse;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class KakaoLoginStrategy implements LoginStrategy {
 
     private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
     private final KakaoApiClient kakaoApiClient;
     private final AuthMemberService authMemberService;
     private final RegisterMemberUseCase registerMemberUseCase;
@@ -37,13 +39,7 @@ public class KakaoLoginStrategy implements LoginStrategy {
                 .map(authMember -> {
                     String memberId = authMember.getMemberId().getValue();
                     String accessToken = tokenService.generateAccessToken(memberId);
-                    String refreshToken = tokenService.generateRefreshToken(accessToken);
-                    return new LoginResponse(
-                            accessToken,
-                            refreshToken,
-                            memberId,
-                            false
-                    );
+                    return refreshTokenService.generateToken(accessToken, false);
                 })
                 .orElseGet(() -> {
                     Member member = registerMemberUseCase.registerMember(new RegisterMemberCommand(
@@ -59,13 +55,7 @@ public class KakaoLoginStrategy implements LoginStrategy {
                     );
                     String memberId = newAuthMember.getMemberId().getValue();
                     String accessToken = tokenService.generateAccessToken(memberId);
-                    String refreshToken = tokenService.generateRefreshToken(accessToken);
-                    return new LoginResponse(
-                            accessToken,
-                            refreshToken,
-                            memberId,
-                            true
-                    );
+                    return refreshTokenService.generateToken(accessToken, true);
                 });
     }
 
