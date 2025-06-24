@@ -3,9 +3,17 @@ package io.hyh.hyhapplication.weather.infra.apiclient;
 import io.hyh.hyhapplication.weather.application.port.out.FetchCurrentWeatherPort;
 import io.hyh.hyhapplication.weather.application.port.out.LoadCoordinatesPort;
 import io.hyh.hyhapplication.weather.domain.*;
-import io.hyh.hyhapplication.weather.infra.apiclient.response.AirPollutionApiResponse;
-import io.hyh.hyhapplication.weather.infra.apiclient.response.LiveWeatherApiResponse;
-import io.hyh.hyhapplication.weather.infra.apiclient.response.WeatherForecastApiResponse;
+import io.hyh.hyhapplication.weather.infra.apiclient.air.AirPollutionInfoApiClient;
+import io.hyh.hyhapplication.weather.infra.apiclient.air.AirPollutionRequest;
+import io.hyh.hyhapplication.weather.infra.apiclient.air.RealtimeAirQualityItem;
+import io.hyh.hyhapplication.weather.infra.apiclient.dto.CommonResponse;
+import io.hyh.hyhapplication.weather.infra.apiclient.dto.CommonResponseV2;
+import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexApiClient;
+import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexItem;
+import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexRequest;
+import io.hyh.hyhapplication.weather.infra.apiclient.weather.UltraShortForecastItem;
+import io.hyh.hyhapplication.weather.infra.apiclient.weather.VilageForecastApiClient;
+import io.hyh.hyhapplication.weather.infra.apiclient.weather.VilageForecastRequest;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +23,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +41,10 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
     private final int NUM_OF_ROWS = 60;
     private final String DATA_TYPE = "JSON";
 
+    private final VilageForecastApiClient vilageForecastApiClient;
+    private final AirPollutionInfoApiClient airPollutionInfoApiClient;
+    private final LivingWeatherIndexApiClient livingWeatherIndexApiClient;
+
 
     @Override
     @Cacheable(value = "weatherData", key = "#depth1 + '_' + #depth2 + '_' + #depth3")
@@ -48,92 +61,73 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
         return mapToDomainModel(weatherForecastResponse, airPollutionResponse, liveWeatherResponse);
     }
 
-    private WeatherForecastApiResponse fetchWeatherForecast(
+    private CommonResponseV2<UltraShortForecastItem> fetchWeatherForecast(
             AdministrativeRegion administrativeRegion) {
         var forecastTime = getBaseTime(LocalDateTime.now());
-        return weatherForecastRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("serviceKey", "{serviceKey}")
-                        .queryParam("pageNo", PAGE_NO)
-                        .queryParam("numOfRows", NUM_OF_ROWS)
-                        .queryParam("dataType", DATA_TYPE)
-                        .queryParam("base_date", forecastTime.baseDate())
-                        .queryParam("base_time", forecastTime.baseTime())
-                        .queryParam("nx", administrativeRegion.latitudeDegree())
-                        .queryParam("ny", administrativeRegion.longitudeDegree())
-                        .build())
-                .retrieve()
-                .toEntity(WeatherForecastApiResponse.class)
-                .getBody();
+        return vilageForecastApiClient.getUltraShortForecast(new VilageForecastRequest(
+                PAGE_NO, NUM_OF_ROWS, DATA_TYPE, forecastTime.baseDate(), forecastTime.baseTime(),
+                administrativeRegion.latitudeDegree(), administrativeRegion.longitudeDegree()
+        ));
     }
 
-    private AirPollutionApiResponse fetchAirPollution(AdministrativeRegion administrativeRegion) {
+    private CommonResponse<RealtimeAirQualityItem> fetchAirPollution(AdministrativeRegion administrativeRegion) {
         // TODO 지역 이름 변환
         Map<String, String> regionMap = Map.of(
                 "서울특별시", "서울",
                 "경기도", "경기"
         );
-        return airPollutionRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("serviceKey", "{serviceKey}")
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 100)
-                        .queryParam("returnType", DATA_TYPE)
-                        .queryParam("sidoName", regionMap.get(administrativeRegion.regionDepth1()))
-                        .build())
-                .retrieve()
-                .toEntity(AirPollutionApiResponse.class)
-                .getBody();
+        return airPollutionInfoApiClient.getRealtimeCityAirQuality(new AirPollutionRequest(
+                1, 100, DATA_TYPE, regionMap.get(administrativeRegion.regionDepth1())
+        ));
     }
 
-    private LiveWeatherApiResponse fetchLiveWeather(AdministrativeRegion administrativeRegion) {
+    private CommonResponseV2<LivingWeatherIndexItem> fetchLiveWeather(AdministrativeRegion administrativeRegion) {
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
-        return liveWeatherRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("serviceKey", "{serviceKey}")
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 100)
-                        .queryParam("dataType", DATA_TYPE)
-                        .queryParam("areaNo", administrativeRegion.adminCode())
-                        .queryParam("time", time)
-                        .build())
-                .retrieve()
-                .toEntity(LiveWeatherApiResponse.class)
-                .getBody();
-    }
-
-    private CurrentWeather mapToDomainModel(WeatherForecastApiResponse weatherForecastResponse,
-                                            AirPollutionApiResponse airPollutionResponse,
-                                            LiveWeatherApiResponse liveWeatherResponse) {
-
-        return new CurrentWeather(
-                WeatherCondition.from(
-                        weatherForecastResponse.getItemsByCategory("SKY").getFirst(),
-                        weatherForecastResponse.getItemsByCategory("PTY").getFirst(),
-                        weatherForecastResponse.getItemsByCategory("LGT").getFirst()
-                ),
-                HumidityLevel.fromValue(
-                        weatherForecastResponse.getItemsByCategory("REH").getFirst()
-                ),
-                RainfallIntensity.fromValue(
-                        weatherForecastResponse.getItemsByCategory("RN1").getFirst()
-                ),
-                AirQuality.Pm10.fromValue(
-                        airPollutionResponse.getPm10()
-                ),
-
-                AirQuality.Pm25.fromValue(
-                        airPollutionResponse.getPm25()
-                ),
-                UvIndex.fromValue(
-                        liveWeatherResponse.getCurrentUVIndex()
+        return livingWeatherIndexApiClient.getUvIndex(
+                new LivingWeatherIndexRequest(
+                        1, 100, DATA_TYPE, administrativeRegion.adminCode(), time
                 )
         );
     }
 
+    private CurrentWeather mapToDomainModel(CommonResponseV2<UltraShortForecastItem> weatherForecastResponse,
+                                            CommonResponse<RealtimeAirQualityItem> airPollutionResponse,
+                                            CommonResponseV2<LivingWeatherIndexItem> liveWeatherResponse) {
+
+        return new CurrentWeather(
+                WeatherCondition.from(
+                        getItemsByCategory(weatherForecastResponse, "SKY").getFirst(),
+                        getItemsByCategory(weatherForecastResponse, "PTY").getFirst(),
+                        getItemsByCategory(weatherForecastResponse, "LGT").getFirst()
+                ),
+                HumidityLevel.fromValue(
+                        getItemsByCategory(weatherForecastResponse, "REH").getFirst()
+                ),
+                RainfallIntensity.fromValue(
+                        getItemsByCategory(weatherForecastResponse, "RN1").getFirst()
+                ),
+                AirQuality.Pm10.fromValue(
+                        airPollutionResponse.response().body().items().getFirst().pm10Value()
+                ),
+                AirQuality.Pm25.fromValue(
+                        airPollutionResponse.response().body().items().getFirst().pm25Value()
+                ),
+                UvIndex.fromValue(
+                        liveWeatherResponse.response().body().items().item().getFirst().h0()
+                )
+        );
+    }
+
+    public List<String> getItemsByCategory(@NotNull CommonResponseV2<UltraShortForecastItem> response, @NotNull String category) {
+        return response.response().body().items().item().stream()
+                .filter(item -> category.equals(item.category()))
+                .sorted(Comparator.comparing(item -> item.baseDate() + item.baseTime()))
+                .map(UltraShortForecastItem::fcstValue)
+                .sorted()
+                .toList();
+    }
 
     record BaseTime(String baseDate /*yyyyMMdd*/, String baseTime /*HHmm*/) {
-
     }
 
     /**
