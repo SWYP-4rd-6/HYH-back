@@ -1,48 +1,36 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.4.3"
+    id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
     id("io.freefair.lombok") version "8.4"
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+allprojects {
+    group = "io.hyh"
+    version = "0.0.1-SNAPSHOT"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    repositories {
+        mavenCentral()
     }
+
 }
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+    apply {
+        plugin("java")
+        plugin("io.freefair.lombok")
+        plugin("org.springframework.boot")
+        plugin("io.spring.dependency-management")
+    }
+    dependencies {
+        implementation("org.jetbrains:annotations:26.0.0")
+    }
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 
-dependencies {
-    implementation("org.jetbrains:annotations:26.0.0")
-
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // json parsing
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    // xml
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.3")
-    // cache
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
-
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    // jwt
-    implementation("io.jsonwebtoken:jjwt:0.12.5")
-
-    runtimeOnly("org.postgresql:postgresql")
-
-    testRuntimeOnly("com.h2database:h2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
