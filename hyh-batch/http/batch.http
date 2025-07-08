@@ -1,0 +1,21 @@
+###
+POST {{BASE_URL}}/api/v1/jobs/launch/weatherDataJob
+Content-Type: application/json
+
+{
+  "baseDate": "20250702",
+  "baseTime": "2000",
+  "nx": 55,
+  "ny": 127
+}
+
+###
+POST http://13.209.98.182:8085/api/v1/jobs/launch/weatherDataJob
+Content-Type: application/json
+
+{
+  "baseDate": "20250702",
+  "baseTime": "2300",
+  "nx": 55,
+  "ny": 127
+}

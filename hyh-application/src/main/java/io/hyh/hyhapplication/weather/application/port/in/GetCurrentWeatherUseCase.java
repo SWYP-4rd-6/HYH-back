@@ -1,8 +1,8 @@
 package io.hyh.hyhapplication.weather.application.port.in;
 
-import org.jetbrains.annotations.NotNull;
-
+import io.hyh.hyhapplication.weather.application.port.in.dto.GetCurrentWeatherCommand;
 import io.hyh.hyhapplication.weather.domain.CurrentWeather;
+import org.jetbrains.annotations.NotNull;
 
 public interface GetCurrentWeatherUseCase {
 

@@ -12,6 +12,7 @@ import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexAp
 import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexItem;
 import io.hyh.hyhapplication.weather.infra.apiclient.living.LivingWeatherIndexRequest;
 import io.hyh.hyhapplication.weather.infra.apiclient.weather.UltraShortForecastItem;
+import io.hyh.hyhapplication.weather.infra.apiclient.weather.UltraShortNowcastItem;
 import io.hyh.hyhapplication.weather.infra.apiclient.weather.VilageForecastApiClient;
 import io.hyh.hyhapplication.weather.infra.apiclient.weather.VilageForecastRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,10 +32,6 @@ import java.util.Map;
 public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
 
     private final LoadCoordinatesPort loadCoordinatesPort;
-
-    private final RestClient weatherForecastRestClient;
-    private final RestClient airPollutionRestClient;
-    private final RestClient liveWeatherRestClient;
 
     private final int PAGE_NO = 1;
     private final int NUM_OF_ROWS = 60;
@@ -51,8 +47,7 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
     public @NotNull CurrentWeather fetchCurrentWeather(@NotNull String depth1,
                                                        @Nullable String depth2,
                                                        @Nullable String depth3) {
-        var administrativeRegion = loadCoordinatesPort.getCoordinatesForAddress(depth1, depth2,
-                depth3);
+        var administrativeRegion = loadCoordinatesPort.getCoordinatesForAddress(depth1, depth2, depth3);
 
         var weatherForecastResponse = fetchWeatherForecast(administrativeRegion);
         var airPollutionResponse = fetchAirPollution(administrativeRegion);
@@ -61,9 +56,37 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
         return mapToDomainModel(weatherForecastResponse, airPollutionResponse, liveWeatherResponse);
     }
 
-    private CommonResponseV2<UltraShortForecastItem> fetchWeatherForecast(
-            AdministrativeRegion administrativeRegion) {
-        var forecastTime = getBaseTime(LocalDateTime.now());
+    @Override
+    public @NotNull CurrentNowCast fetchCurrentNowCast(@NotNull String depth1, @Nullable String depth2, @Nullable String depth3) {
+        var administrativeRegion = loadCoordinatesPort.getCoordinatesForAddress(depth1, depth2, depth3);
+        var weatherNowcastResponse = fetchShortNowcase(administrativeRegion.gridX(), administrativeRegion.gridY());
+
+        return new CurrentNowCast(
+                getNowcastItemsByCategory(weatherNowcastResponse, "T1H").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "RN1").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "UUU").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "VVV").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "REH").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "PTY").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "VEC").getFirst(),
+                getNowcastItemsByCategory(weatherNowcastResponse, "WSD").getFirst()
+        );
+    }
+
+    private CommonResponseV2<UltraShortNowcastItem> fetchShortNowcase(int nx, int ny) {
+        var baseTime = BaseTimeRequest.fieMinuteAgo(LocalDateTime.now()); // 5분전
+        return vilageForecastApiClient.getUltraShortNowcast(
+                new VilageForecastRequest(
+                        PAGE_NO, 8, DATA_TYPE,
+                        baseTime.baseDate(),
+                        baseTime.baseTime(),
+                        nx, ny
+                )
+        );
+    }
+
+    private CommonResponseV2<UltraShortForecastItem> fetchWeatherForecast(AdministrativeRegion administrativeRegion) {
+        var forecastTime = BaseTimeRequest.oneHourAgo(LocalDateTime.now());
         return vilageForecastApiClient.getUltraShortForecast(new VilageForecastRequest(
                 PAGE_NO, NUM_OF_ROWS, DATA_TYPE, forecastTime.baseDate(), forecastTime.baseTime(),
                 administrativeRegion.latitudeDegree(), administrativeRegion.longitudeDegree()
@@ -96,15 +119,15 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
 
         return new CurrentWeather(
                 WeatherCondition.from(
-                        getItemsByCategory(weatherForecastResponse, "SKY").getFirst(),
-                        getItemsByCategory(weatherForecastResponse, "PTY").getFirst(),
-                        getItemsByCategory(weatherForecastResponse, "LGT").getFirst()
+                        getShortForcastItemsByCategory(weatherForecastResponse, "SKY").getFirst(),
+                        getShortForcastItemsByCategory(weatherForecastResponse, "PTY").getFirst(),
+                        getShortForcastItemsByCategory(weatherForecastResponse, "LGT").getFirst()
                 ),
                 HumidityLevel.fromValue(
-                        getItemsByCategory(weatherForecastResponse, "REH").getFirst()
+                        getShortForcastItemsByCategory(weatherForecastResponse, "REH").getFirst()
                 ),
                 RainfallIntensity.fromValue(
-                        getItemsByCategory(weatherForecastResponse, "RN1").getFirst()
+                        getShortForcastItemsByCategory(weatherForecastResponse, "RN1").getFirst()
                 ),
                 AirQuality.Pm10.fromValue(
                         airPollutionResponse.response().body().items().getFirst().pm10Value()
@@ -118,7 +141,7 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
         );
     }
 
-    public List<String> getItemsByCategory(@NotNull CommonResponseV2<UltraShortForecastItem> response, @NotNull String category) {
+    private List<String> getShortForcastItemsByCategory(@NotNull CommonResponseV2<UltraShortForecastItem> response, @NotNull String category) {
         return response.response().body().items().item().stream()
                 .filter(item -> category.equals(item.category()))
                 .sorted(Comparator.comparing(item -> item.baseDate() + item.baseTime()))
@@ -127,15 +150,19 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
                 .toList();
     }
 
-    record BaseTime(String baseDate /*yyyyMMdd*/, String baseTime /*HHmm*/) {
+    private List<String> getNowcastItemsByCategory(@NotNull CommonResponseV2<UltraShortNowcastItem> response, @NotNull String category) {
+        return response.response().body().items().item().stream()
+                .filter(item -> category.equals(item.category()))
+                .map(UltraShortNowcastItem::obsrValue)
+                .sorted()
+                .toList();
     }
 
     /**
      * 주어진 시간 기준으로 가장 최신 예보 시간을 계산
      */
-    private BaseTime getBaseTime(LocalDateTime baseLocalDateTime) {
-        List<String> FORECAST_TIMES = List.of("0200", "0500", "0800", "1100", "1400", "1700",
-                "2000", "2300");
+    private BaseTimeRequest getBaseTime(LocalDateTime baseLocalDateTime) {
+        List<String> FORECAST_TIMES = List.of("0200", "0500", "0800", "1100", "1400", "1700", "2000", "2300");
 
         String currentTime = baseLocalDateTime.format(DateTimeFormatter.ofPattern("HHmm"));
         String today = baseLocalDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -152,10 +179,31 @@ public class CurrentWeatherApiAdapter implements FetchCurrentWeatherPort {
         }
 
         if (latestTime == null) {
-            return new BaseTime(yesterday, FORECAST_TIMES.getLast());
+            return new BaseTimeRequest(yesterday, FORECAST_TIMES.getLast());
         }
 
-        return new BaseTime(today, latestTime);
+        return new BaseTimeRequest(today, latestTime);
+    }
+
+    record BaseTimeRequest(String baseDate /*yyyyMMdd*/, String baseTime /*HHmm*/) {
+
+        public static BaseTimeRequest from(LocalDateTime dateTime) {
+            String baseDate = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String baseTime = dateTime.format(DateTimeFormatter.ofPattern("HHmm"));
+
+            return new BaseTimeRequest(baseDate, baseTime);
+        }
+
+        public static BaseTimeRequest fieMinuteAgo(LocalDateTime dateTime) {
+            LocalDateTime fieMinuteAgo = dateTime.minusMinutes(5);
+            return from(fieMinuteAgo);
+        }
+
+        public static BaseTimeRequest oneHourAgo(LocalDateTime dateTime) {
+            LocalDateTime oneHourAgo = dateTime.minusHours(1);
+            return from(oneHourAgo);
+        }
+
     }
 
 }
