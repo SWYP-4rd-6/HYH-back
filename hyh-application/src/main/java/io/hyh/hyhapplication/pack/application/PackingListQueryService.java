@@ -26,7 +26,7 @@ public class PackingListQueryService {
     @Transactional(readOnly = true)
     public CheckUserTest getTestUser(String userId) {
         return checkUserTestJpaRepository.findById(userId)
-                .orElseThrow(() -> new HyhApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userId)));
+                .orElseThrow(() -> new HyhApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("%s not founded", userId)));
     }
 
 

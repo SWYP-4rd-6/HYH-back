@@ -1,7 +1,8 @@
 package io.hyh.hyhapplication.auth.application;
 
-import io.hyh.hyhapplication.auth.application.exception.InvalidTokenException;
 import io.hyh.hyhapplication.auth.domain.TokenPort;
+import io.hyh.hyhapplication.common.exception.ErrorCode;
+import io.hyh.hyhapplication.common.exception.HyhApplicationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -84,14 +85,13 @@ public class TokenService implements TokenPort {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("만료된 토큰입니다.");
-        } catch (MalformedJwtException e) {
-            throw new InvalidTokenException("잘못된 형식의 토큰입니다.");
-        } catch (SignatureException e) {
-            throw new InvalidTokenException("토큰 서명이 유효하지 않습니다.");
+        } catch (ExpiredJwtException |
+                 MalformedJwtException |
+                 SignatureException e) {
+            throw new HyhApplicationException(ErrorCode.INVALID_TOKEN);
         } catch (Exception e) {
-            throw new InvalidTokenException("토큰 검증 중 오류가 발생했습니다.");
+            // fixme 별도 예외?
+            throw new HyhApplicationException(ErrorCode.INVALID_TOKEN);
         }
     }
 

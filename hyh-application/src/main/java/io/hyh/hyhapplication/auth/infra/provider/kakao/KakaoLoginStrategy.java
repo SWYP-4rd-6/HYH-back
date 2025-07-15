@@ -8,6 +8,8 @@ import io.hyh.hyhapplication.auth.application.dto.LoginCommand;
 import io.hyh.hyhapplication.auth.application.dto.LoginResponse;
 import io.hyh.hyhapplication.auth.domain.AuthMember;
 import io.hyh.hyhapplication.auth.domain.AuthProvider;
+import io.hyh.hyhapplication.common.exception.ErrorCode;
+import io.hyh.hyhapplication.common.exception.HyhApplicationException;
 import io.hyh.hyhapplication.member.application.usecase.RegisterMemberUseCase;
 import io.hyh.hyhapplication.member.application.usecase.dto.RegisterMemberCommand;
 import io.hyh.hyhapplication.member.domain.Member;
@@ -29,7 +31,7 @@ public class KakaoLoginStrategy implements LoginStrategy {
     public LoginResponse login(LoginCommand command) {
         var tokenInfo = kakaoApiClient.getTokenInfo(command.providerAccessToken());
         if (tokenInfo.expiresIn() <= 0) {
-            throw new IllegalArgumentException("access token is expired");
+            throw new HyhApplicationException(ErrorCode.ACCESS_TOKEN_EXPIRED);
         }
 
         KakaoApiClient.KakaoUserResponse userResponse = kakaoApiClient.getUserInfo(command.providerAccessToken());
