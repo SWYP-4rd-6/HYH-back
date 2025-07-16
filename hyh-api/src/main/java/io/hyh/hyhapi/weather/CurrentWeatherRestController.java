@@ -1,7 +1,10 @@
 package io.hyh.hyhapi.weather;
 
-import io.hyh.hyhapplication.weather.application.port.in.GetCurrentWeatherCommand;
 import io.hyh.hyhapplication.weather.application.port.in.GetCurrentWeatherUseCase;
+import io.hyh.hyhapplication.weather.application.port.in.GetTodayWeatherUseCase;
+import io.hyh.hyhapplication.weather.application.port.in.dto.GetCurrentWeatherCommand;
+import io.hyh.hyhapplication.weather.application.port.in.dto.GetTodayWeatherCommand;
+import io.hyh.hyhapplication.weather.application.port.in.dto.GetTodayWeatherResult;
 import io.hyh.hyhapplication.weather.domain.CurrentWeather;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/weather/current")
+@RequestMapping("/api/v1/weather")
 @RequiredArgsConstructor
 public class CurrentWeatherRestController {
 
     private final GetCurrentWeatherUseCase getCurrentWeatherUseCase;
+    private final GetTodayWeatherUseCase getTodayWeatherUseCase;
 
-    @GetMapping
+    @GetMapping("/current")
     CurrentWeatherResponse getCurrentWeather(@RequestParam String depth1,
                                              @RequestParam(required = false) String depth2,
                                              @RequestParam(required = false) String depth3) {
@@ -24,6 +28,21 @@ public class CurrentWeatherRestController {
                 getCurrentWeatherUseCase.getCurrentWeather(
                         new GetCurrentWeatherCommand(depth1, depth2, depth3))
         );
+    }
+
+    @GetMapping("/today")
+    GetTodayWeatherResult getTodayWeather(@RequestParam String baseDate, // yyyyMMdd
+                                          @RequestParam String baseTime,
+                                          @RequestParam String depth1,
+                                          @RequestParam(required = false) String depth2,
+                                          @RequestParam(required = false) String depth3) {
+        return getTodayWeatherUseCase.getTodayWeather(new GetTodayWeatherCommand(
+                baseDate,
+                baseTime,
+                depth1,
+                depth2,
+                depth3
+        ));
     }
 
     record CurrentWeatherResponse(

@@ -39,7 +39,7 @@ public class VilageForecastApiClient {
     public CommonResponseV2<VillageForecastItem> getVillageForecast(VilageForecastRequest request) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/getUltraSrtNcst")
+                        .path("/getVilageFcst")
                         .queryParam("serviceKey", "{serviceKey}")
                         .queryParam("pageNo", request.pageNo())
                         .queryParam("numOfRows", request.numOfRows())

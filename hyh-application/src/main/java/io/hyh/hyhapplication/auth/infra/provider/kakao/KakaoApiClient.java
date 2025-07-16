@@ -2,19 +2,19 @@ package io.hyh.hyhapplication.auth.infra.provider.kakao;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.hyh.hyhapplication.common.exception.ErrorCode;
+import io.hyh.hyhapplication.common.exception.HyhApplicationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
-import java.net.http.HttpClient;
 
 @Component
 @RequiredArgsConstructor
 public class KakaoApiClient {
 
     private final RestClient kakaoRestClient;
-    HttpClient httpClient;
 
 
     public KakaoTokenInfoResponse getTokenInfo(String accessToken) {
@@ -22,6 +22,12 @@ public class KakaoApiClient {
                 .uri("/v1/user/access_token_info")
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new HyhApplicationException(ErrorCode.KAKAO_SERVER_AUTH_ERROR);
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new HyhApplicationException(ErrorCode.KAKAO_SERVER_INTERNAL_ERROR);
+                })
                 .toEntity(KakaoTokenInfoResponse.class)
                 .getBody();
     }
@@ -32,6 +38,12 @@ public class KakaoApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new HyhApplicationException(ErrorCode.KAKAO_SERVER_AUTH_ERROR);
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new HyhApplicationException(ErrorCode.KAKAO_SERVER_INTERNAL_ERROR);
+                })
                 .toEntity(KakaoUserResponse.class)
                 .getBody();
     }

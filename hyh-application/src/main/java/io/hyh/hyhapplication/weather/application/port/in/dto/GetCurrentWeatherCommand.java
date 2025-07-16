@@ -1,4 +1,4 @@
-package io.hyh.hyhapplication.weather.application.port.in;
+package io.hyh.hyhapplication.weather.application.port.in.dto;
 
 public record GetCurrentWeatherCommand(
         String depth1,

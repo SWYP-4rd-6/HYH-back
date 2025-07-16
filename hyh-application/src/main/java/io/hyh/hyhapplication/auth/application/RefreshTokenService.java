@@ -4,6 +4,8 @@ import io.hyh.hyhapplication.auth.application.dto.LoginResponse;
 import io.hyh.hyhapplication.auth.domain.RefreshToken;
 import io.hyh.hyhapplication.auth.domain.RefreshTokenRepository;
 import io.hyh.hyhapplication.auth.domain.TokenPort;
+import io.hyh.hyhapplication.common.exception.ErrorCode;
+import io.hyh.hyhapplication.common.exception.HyhApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,20 +37,20 @@ public class RefreshTokenService {
 
     public LoginResponse refreshToken(String refreshToken) {
         if (!tokenService.isValidToken(refreshToken)) {
-            throw new IllegalArgumentException("invalid refresh token[38]");
+            throw new HyhApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         refreshTokenRepository.findByToken(refreshToken)
                 .ifPresentOrElse(
                         token -> {
                             if (token.isRevoked()) {
-                                throw new IllegalArgumentException("invalid refresh token[45]");
+                                throw new HyhApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
                             }
                             token.revoke();
                             refreshTokenRepository.save(token);
                         },
                         () -> {
-                            throw new IllegalArgumentException("invalid refresh token[51]");
+                            throw new HyhApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
                         }
                 );
 
@@ -63,7 +65,7 @@ public class RefreshTokenService {
 
     public void invalidateToken(String refreshToken) {
         refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("invalid refresh token"));
+                .orElseThrow(() -> new HyhApplicationException(ErrorCode.INVALID_REFRESH_TOKEN));
 
         String memberId = tokenService.extractMemberId(refreshToken);
 

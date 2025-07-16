@@ -13,7 +13,7 @@ public class Response<T> {
     private T result;
 
     public static Response<Void> error(ErrorCode errorCode) {
-        return new Response<>(errorCode.getValue(), errorCode.name(), null);
+        return new Response<>(errorCode.getStatus().value(), errorCode.name(), null);
     }
 
     public static <T> Response<T> success(T result) {

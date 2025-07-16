@@ -1,6 +1,9 @@
+server:
+  port: 8085
+
 spring:
   application:
-    name: hyh-api
+    name: hyh-batch
 
   config:
     import: classpath:config.yml
